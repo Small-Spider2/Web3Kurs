@@ -1,0 +1,193 @@
+<!--#Теоретический вопрос
+
+1. Опишите своими словами разницу между функциями `setTimeout()` и `setInterval()`.
+2. Что произойдет, если в функцию `setTimeout()` передать нулевую задержку? Сработает ли она мгновенно, и почему?
+3. Почему важно не забывать вызывать функцию `clearInterval()`, когда ранее созданный цикл запуска вам уже не нужен?
+
+## Задание
+
+Реализовать программу, показывающую циклично разные картинки.
+
+#### Технические требования:
+- В папке `banners` лежит HTML код и папка с картинками.
+- При запуске программы на экране должна отображаться первая картинка.
+- Через 10 секунд вместо нее должна быть показана вторая картинка.
+- Еще через 10 секунд - третья.
+- Еще через 10 секунд - четвертая.
+- После того, как покажутся все картинки - этот цикл должен начаться заново.
+- При запуске программы где-то на экране должна появиться кнопка с надписью `Прекратить`.
+- По нажатию на кнопку `Прекратить` цикл завершается, на экране остается показанной та картинка, которая была там при нажатии кнопки.
+- Рядом с кнопкой `Прекратить` должна быть кнопка `Возобновить показ`, при нажатии которой цикл продолжается с той картинки, которая в данный момент показана на экране.
+- Разметку можно менять, добавлять нужные классы, id, атрибуты, теги.
+
+#### Не обязательное задание продвинутой сложности:
+- При запуске программы на экране должен быть таймер с секундами и миллисекундами, показывающий сколько осталось до показа следующей картинки.
+- Делать скрытие картинки и показывание новой картинки постепенным (анимация fadeOut / fadeIn) в течение 0.5 секунды.
+
+#### Литература:
+- [setTimeout и setInterval](https://learn.javascript.ru/settimeout-setinterval)-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Banners</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      
+      .slideshow-container {
+        position: relative;
+        width: 400px;
+        height: 400px;
+        margin-bottom: 20px;
+      }
+      
+      .image-to-show {
+        width: 400px;
+        height: 400px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+      }
+      
+      .image-to-show.active {
+        opacity: 1;
+      }
+      
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      
+      button {
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      
+      button:hover {
+        background-color: #45a049;
+      }
+      
+      button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="slideshow-container" id="slideshow">
+        <img src="./img/1.jpg" alt="image of game" class="image-to-show active" id="img-1" />
+        <img src="./img/2.jpg" alt="image of game" class="image-to-show" id="img-2" />
+        <img src="./img/3.JPG" alt="image of game" class="image-to-show" id="img-3" />
+        <img src="./img/4.png" alt="image of game" class="image-to-show" id="img-4" />
+      </div>
+      
+      <div class="controls">
+        <button id="stop-button">Прекратить</button>
+        <button id="resume-button" disabled>Возобновить показ</button>
+      </div>
+    </div>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+
+        const images = document.querySelectorAll('.image-to-show');
+        const stopButton = document.getElementById('stop-button');
+        const resumeButton = document.getElementById('resume-button');
+        
+        /*let currentIndex = 0;
+        let slideshowInterval;
+        let isPlaying = true;
+        
+        function showNextImage() {
+          for (let i = 0; i < images.length; i++) {
+            images[i].classList.remove('active');
+          }
+          
+          images[currentIndex].classList.add('active');
+        
+          currentIndex = (currentIndex + 1) % images.length;
+        }
+        function startSlideshow() {
+          clearInterval(slideshowInterval);
+          slideshowInterval = setInterval(showNextImage, 1110);
+          isPlaying = true;
+          stopButton.disabled = false;
+          resumeButton.disabled = true;
+        }
+        function stopSlideshow() {
+          clearInterval(slideshowInterval);
+          isPlaying = false;
+          stopButton.disabled = true;
+          resumeButton.disabled = false;
+        }
+        stopButton.addEventListener('click', stopSlideshow);
+        resumeButton.addEventListener('click', startSlideshow);
+        startSlideshow();
+      });*/
+
+      let currentIndex = 0;
+    let timeoutId;
+    let isPlaying = true;
+
+    function showNextImage() {
+      // Прибрати всі активні класи
+      images.forEach(img => img.classList.remove('active'));
+
+      // Показати поточне зображення
+      images[currentIndex].classList.add('active');
+
+      // Збільшити індекс (по колу)
+      currentIndex = (currentIndex + 1) % images.length;
+
+      // Запланувати наступний показ
+      if (isPlaying) {
+        timeoutId = setTimeout(showNextImage, 0);
+      }
+    }
+
+    function startSlideshow() {
+      isPlaying = true;
+      stopButton.disabled = false;
+      resumeButton.disabled = true;
+      showNextImage(); // Почати цикл знову
+    }
+
+    function stopSlideshow() {
+      isPlaying = false;
+      clearTimeout(timeoutId);
+      stopButton.disabled = true;
+      resumeButton.disabled = false;
+    }
+
+    stopButton.addEventListener('click', stopSlideshow);
+    resumeButton.addEventListener('click', startSlideshow);
+
+    // Старт одразу після завантаження
+    startSlideshow();
+  });
+
+    </script>
+  </body>
+</html>

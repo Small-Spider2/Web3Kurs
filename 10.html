@@ -1,0 +1,125 @@
+<!--## Задание
+
+Написать реализацию кнопки "Показать пароль".
+
+#### Технические требования:
+- В файле `index.html` лежит разметка для двух полей ввода пароля. 
+- По нажатию на иконку рядом с конкретным полем - должны отображаться символы, которые ввел пользователь, иконка меняет свой внешний вид.
+- Когда пароля не видно - иконка поля должна выглядеть, как та, что в первом поле (Ввести пароль)
+- Когда нажата иконка, она должна выглядеть, как та, что во втором поле (Ввести пароль)
+- По нажатию на кнопку Подтвердить, нужно сравнить введенные значения в полях
+- Если значения совпадают - вывести модальное окно (можно alert) с текстом - `You are welcome`;
+- Если значение не совпадают - вывести под вторым полем текст красного цвета  `Нужно ввести одинаковые значения`
+- После нажатия на кнопку страница не должна перезагружаться
+- Можно менять разметку, добавлять атрибуты, теги, id, классы и так далее.
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
+      integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+      crossorigin="anonymous"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Homework-buttons</title>
+    <style>
+      .password-form {
+        display: flex;
+        flex-direction: column;
+      }
+      .input-wrapper {
+        position: relative;
+        width: intrinsic;       
+        width: -moz-max-content;   
+        width: -webkit-max-content;
+      }
+
+      .input-wrapper input {
+        min-width: 120px;
+        padding: 10px;
+        margin-bottom: 24px;
+      }
+
+      .input-wrapper i {
+        position: absolute;
+        right: 10px;
+        top: 12px;
+        color: grey;
+        cursor: pointer;
+      }
+
+      .btn {
+        width: 150px;
+      }
+      
+      .error-message {
+        color: red;
+        margin-top: -20px;
+        margin-bottom: 15px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <form class="password-form" id="passwordForm" onclick="togglePasswordVisibility(inputField, toggleIcon)">
+      <label class="input-wrapper">
+        Ввести пароль
+        <input type="password" id="password"/>
+        <i class="fas fa-eye icon-password" id="togglePassword"></i>
+      </label>
+      <label class="input-wrapper">
+        Подтвердить пароль
+        <input type="password" id="confirmPassword"/>
+        <i class="fas fa-eye icon-password" id="toggleConfirmPassword"></i>
+      </label>
+      <div class="error-message" id="errorMessage">Нужно ввести одинаковые значения</div>
+      <button type="submit" class="btn">Подтвердить</button>
+    </form>
+
+  <script>
+
+      const form = document.getElementById('passwordForm');
+      const password = document.getElementById('password');
+      const confirmPassword = document.getElementById('confirmPassword');
+      const togglePassword = document.getElementById('togglePassword');
+      const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+      const errorMessage = document.getElementById('errorMessage');
+
+
+      function togglePasswordVisibility(inputField, toggleIcon) {
+        if (inputField.type == 'password') {//
+          inputField.type = 'text';
+          toggleIcon.classList.remove('fa-eye');
+          toggleIcon.classList.add('fa-eye-slash');
+        } else {
+          inputField.type = 'password';
+          toggleIcon.classList.remove('fa-eye-slash');
+          toggleIcon.classList.add('fa-eye');
+        }
+      }
+
+
+      togglePassword.addEventListener('click', function() {
+        togglePasswordVisibility(password, togglePassword);
+      });
+
+      toggleConfirmPassword.addEventListener('click', function() {
+        togglePasswordVisibility(confirmPassword, toggleConfirmPassword);
+      });
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        if (password.value == confirmPassword.value) {
+          errorMessage.style.display = 'none';
+          alert('You are welcome');
+        } else {
+          errorMessage.style.display = 'block';
+        }
+      });
+    </script>
+  </body>
+</html>
